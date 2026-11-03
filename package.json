@@ -1,0 +1,29 @@
+{
+  "name": "remote-classrooms",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remote Classrooms role-based learning portal",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "create-user": "node backend/scripts/create-user.js",
+    "create-admin": "node backend/scripts/create-admin.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.2",
+    "helmet": "^8.0.0",
+    "pg": "^8.16.3",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.4"
+  }
+}
