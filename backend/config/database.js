@@ -1,3 +1,4 @@
+require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
 const { Pool } = require("pg");
@@ -8,7 +9,7 @@ function getDatabaseConfig() {
       rejectUnauthorized: true,
       ...(process.env.PGSSL_CA ? { ca: process.env.PGSSL_CA.replace(/\\n/g, "\n") } : {}),
     }
-    : undefined;
+    : false;
 
   if (process.env.DATABASE_URL) {
     const url = new URL(process.env.DATABASE_URL);
@@ -17,7 +18,7 @@ function getDatabaseConfig() {
     }
     return {
       host: url.hostname,
-      port: Number(url.port || 5432),
+      port: Number(url.port || 5433),
       user: decodeURIComponent(url.username),
       password: decodeURIComponent(url.password),
       database: decodeURIComponent(url.pathname.replace(/^\/+/, "")),

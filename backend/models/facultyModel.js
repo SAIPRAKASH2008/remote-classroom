@@ -186,21 +186,34 @@ async function seedDemoFacultyData() {
         [courseId, student.email, student.attendance, student.progress],
       );
     }
+
     for (const submission of course.submissions) {
       const assignment = await db.query(
         `INSERT INTO assignments (course_id, title, max_marks)
          VALUES ($1, $2, $3)
-         ON CONFLICT (course_id, title) DO UPDATE SET max_marks = EXCLUDED.max_marks
+         ON CONFLICT (course_id, title)
+         DO UPDATE SET max_marks = EXCLUDED.max_marks
          RETURNING id`,
         [courseId, submission.title, submission.maxMarks],
       );
       await db.query(
-        `INSERT INTO submissions (assignment_id, student_id, submission_text, marks, feedback, graded_at)
-         SELECT $1, id, $3, $4, $5, CASE WHEN $4 IS NULL THEN NULL ELSE CURRENT_TIMESTAMP END
-         FROM users WHERE email = $2 AND role = 'student' AND active = TRUE
-         ON CONFLICT (assignment_id, student_id) DO NOTHING`,
-        [assignment.rows[0].id, student.email, submission.submissionText, submission.marks, submission.feedback],
-      );
+  `INSERT INTO submissions
+    (assignment_id, student_id, submission_text, marks, feedback, graded_at)
+   SELECT $1, id, $3, $4::INTEGER, $5,
+     CASE WHEN $4::INTEGER IS NULL THEN NULL ELSE CURRENT_TIMESTAMP END
+   FROM users
+   WHERE id = $2
+     AND role = 'student'
+     AND active = TRUE
+   ON CONFLICT (assignment_id, student_id) DO NOTHING`,
+  [
+    assignment.rows[0].id,
+    submission.studentId,
+    submission.submissionText,
+    submission.marks,
+    submission.feedback,
+  ],
+);
     }
   }
 }
